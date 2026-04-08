@@ -1,10 +1,16 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
+  apiKey: "AIzaSyD6dBj1iO3Kxu6M-QqIIaWnf-_hvPWS4_k",
+  authDomain: "countdownapp-843c8.firebaseapp.com",
+  projectId: "countdownapp-843c8",
+  storageBucket: "countdownapp-843c8.firebasestorage.app",
+  messagingSenderId: "677366909831",
+  appId: "1:677366909831:web:3fe56d59fee5c93db3e122",
+  measurementId: "G-LQN7DD6XSZ"
 };
 
 const app = initializeApp(firebaseConfig);
