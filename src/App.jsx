@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { onSnapshot } from "firebase/firestore";
-import { docRef, saveDate } from "./firebase";
+import { loadDate, saveDate, subscribeToDate } from "./firebase";
 import "./App.css";
 
 const quotes = [
@@ -9,6 +8,8 @@ const quotes = [
   "Discipline beats motivation.",
   "Stay focused. You are closer than you think.",
 ];
+const LOCAL_DATE_KEY = "countdown_target_date";
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 export default function App() {
   const [date, setDate] = useState("");
@@ -17,21 +18,79 @@ export default function App() {
   const [quote, setQuote] = useState("");
   const [savedDate, setSavedDate] = useState("");
 
+  const toTargetDate = (dateString) => {
+    const [year, month, day] = dateString.split("-").map(Number);
+    return new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+  };
+
+  const persistDateLocally = (dateString) => {
+    try {
+      localStorage.setItem(LOCAL_DATE_KEY, dateString);
+    } catch {
+      // ignore localStorage failures
+    }
+  };
+
+  const readLocalDate = () => {
+    try {
+      const localDate = localStorage.getItem(LOCAL_DATE_KEY);
+      return DATE_PATTERN.test(localDate || "") ? localDate : "";
+    } catch {
+      return "";
+    }
+  };
+
+  const applyDate = (nextDate) => {
+    if (!DATE_PATTERN.test(nextDate || "")) return;
+
+    setSavedDate(nextDate);
+    setDate(nextDate);
+    setTarget(toTargetDate(nextDate));
+    persistDateLocally(nextDate);
+  };
+
   useEffect(() => {
     setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+  }, []);
 
-    const unsubscribe = onSnapshot(docRef, (snapshot) => {
-      if (!snapshot.exists()) return;
+  useEffect(() => {
+    let mounted = true;
+    const localDate = readLocalDate();
 
-      const remoteDate = snapshot.data().date;
-      if (!remoteDate) return;
+    if (localDate) {
+      applyDate(localDate);
+    }
 
-      setSavedDate(remoteDate);
-      setDate(remoteDate);
-      setTarget(new Date(remoteDate));
+    loadDate()
+      .then((remoteDate) => {
+        if (!mounted) return;
+
+        if (remoteDate) {
+          applyDate(remoteDate);
+          return;
+        }
+
+        if (localDate) {
+          saveDate(localDate).catch(() => {
+            // keep running with local value even if sync fails
+          });
+        }
+      })
+      .catch(() => {
+        // local fallback already applied above
+      });
+
+    const unsubscribe = subscribeToDate((remoteDate) => {
+      if (!mounted) return;
+      applyDate(remoteDate);
+    }, () => {
+      // keep app usable with local date if realtime sync fails
     });
 
-    return () => unsubscribe();
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -69,20 +128,23 @@ export default function App() {
       return;
     }
 
-    const selected = new Date(date);
+    const selected = toTargetDate(date);
     if (selected <= new Date()) {
       alert("Please select a future date");
       return;
     }
 
+    applyDate(date);
+
     if (date === savedDate) {
-      setTarget(selected);
       return;
     }
 
-    await saveDate(date);
-    setSavedDate(date);
-    setTarget(selected);
+    try {
+      await saveDate(date);
+    } catch {
+      alert("Date saved locally, but cloud sync failed. Check internet/Firestore rules.");
+    }
   };
 
   return (

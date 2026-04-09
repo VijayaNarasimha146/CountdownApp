@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -26,3 +26,17 @@ export const loadDate = async () => {
   const snap = await getDoc(docRef);
   return snap.exists() ? snap.data().date : null;
 };
+
+export const subscribeToDate = (onDate, onError) =>
+  onSnapshot(
+    docRef,
+    (snapshot) => {
+      if (!snapshot.exists()) return;
+
+      const remoteDate = snapshot.data().date;
+      if (!remoteDate) return;
+
+      onDate(remoteDate);
+    },
+    onError
+  );
