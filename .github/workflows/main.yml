@@ -15,11 +15,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - run: npm install
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
-      - run: npm run build
+      - name: Clean install
+        run: npm ci
 
-      - uses: peaceiris/actions-gh-pages@v3
+      - name: Build
+        run: npx vite build
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
