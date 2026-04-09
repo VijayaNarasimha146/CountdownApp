@@ -1,0 +1,125 @@
+.app-container {
+  --bg-start: #0f766e;
+  --bg-end: #0b3b6f;
+  --card-bg: rgba(255, 255, 255, 0.96);
+  --text-dark: #152238;
+  --accent: #0b7a75;
+  --accent-hover: #095f5b;
+  --accent-shadow: rgba(11, 122, 117, 0.32);
+  --focus-ring: rgba(11, 122, 117, 0.35);
+  --muted-border: #c9d4e5;
+  --light-text: #f4f8ff;
+
+  min-height: 100vh;
+  padding: 48px 20px;
+  text-align: center;
+  color: var(--light-text);
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.18), transparent 45%),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.12), transparent 35%),
+    linear-gradient(145deg, var(--bg-start), var(--bg-end));
+}
+
+.app-title {
+  margin: 0;
+  font-size: clamp(1.8rem, 3.2vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.card {
+  width: min(92vw, 380px);
+  margin: 28px auto 0;
+  padding: 24px;
+  border-radius: 18px;
+  background: var(--card-bg);
+  color: var(--text-dark);
+  box-shadow: 0 22px 35px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(5px);
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.date-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--muted-border);
+  background: #ffffff;
+  color: var(--text-dark);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: saturate(1.2);
+}
+
+.set-date-button {
+  margin-top: 14px;
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--accent), #1d4ed8);
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  box-shadow: 0 12px 20px var(--accent-shadow);
+}
+
+.set-date-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.set-date-button:active {
+  transform: translateY(0);
+}
+
+.set-date-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--focus-ring), 0 12px 20px var(--accent-shadow);
+}
+
+.countdown {
+  margin-top: 22px;
+}
+
+.countdown h2 {
+  margin: 0;
+  font-size: clamp(1.3rem, 2.8vw, 2rem);
+  font-weight: 700;
+}
+
+.quote {
+  margin: 36px auto 0;
+  width: min(92vw, 560px);
+  border-radius: 14px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(3px);
+  font-style: italic;
+  color: #f8fbff;
+}
+
+.quote p {
+  margin: 0;
+}
